@@ -12,9 +12,23 @@ def index(request):
 
 
 def charge(request):
-	amount = 5
 	if request.method == 'POST':
 		print('Data:', request.POST)
+
+		amount = int(request.POST['amount'])
+
+		customer = stripe.Customer.create(
+			email=request.POST['email'],
+			name=request.POST['username'],
+			source=request.POST['stripeToken']
+		)
+
+		charge = stripe.Charge.create(
+			customer=customer,
+			amount=amount*100,
+			currency='eur',
+			description='Payment'
+		)
 
 	return redirect(reverse('success', args=[amount]))
 
